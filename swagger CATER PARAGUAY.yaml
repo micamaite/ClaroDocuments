@@ -1,0 +1,752 @@
+swagger: "2.0"
+info:
+  version: "1"
+  title: "Tucarpeta Claro"
+  description: "Tucarpeta Claro Paraguay"
+paths:
+  /token:
+    post:
+      tags:
+        - "Autentica los servicios"
+      summary: "Autentica a un usuario"
+      description: "Autentica a un usuario con OAuth2"
+      consumes:
+        - "application/x-www-form-urlencoded"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "grant_type"
+          in: "formData"
+          type: "string"
+          description: "Tipo de credenciales a utilizar"
+          required: true
+          default: "password"
+        - name: "username"
+          in: "formData"
+          type: "string"
+          description: "Nombre de usuario a autenticar"
+          required: true
+        - name: "password"
+          in: "formData"
+          type: "string"
+          description: "Contraseña del usuario"
+          required: true
+        - name: "Content-Type"
+          in: "header"
+          required: true
+          type: "string"
+          default: "application/x-www-form-urlencoded"
+      responses:
+        200:
+          description: "Operación exitosa"
+          schema:
+            type: "object"
+            properties:
+              access_token:
+                type: "string"
+                title: "Token de acceso"
+              token_type:
+                type: "string"
+                title: "Tipo de token que se entrega"
+              expires_in:
+                type: "integer"
+                title: "Tiempo de expiración en segundos"
+              user_name:
+                type: "string"
+                title: "Nombre del usuario autenticado"
+        400:
+          description: "Datos inválidos"
+        401:
+          description: "No autenticado"
+        403:
+          description: "No autorizado"
+        500:
+          description: "Error interno"
+  /api/v1/cater/attachment:
+    post:
+      tags:
+        - "Digitaliza un cater"
+      summary: "Envía a tucarpeta metadata y documento PCT"
+      description: "Envía a tucarpeta metadata y documento PCT"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "body"
+          in: "body"
+          description: "Información del tramite cater"
+          required: true
+          schema:
+            $ref: "#/definitions/MetadataAcp"
+        - name: "Authorization"
+          in: "header"
+          required: true
+          type: "string"
+          default: "bearer "
+        - name: "Content-Type"
+          in: "header"
+          required: true
+          type: "string"
+          default: "application/json"
+      responses:
+        200:
+          description: "Operación exitosa"
+          schema:
+            type: "object"
+            properties:
+              idDocument:
+                type: "string"
+                title: "Identificador del tramite"
+              url: 
+                type: "string"
+                title: "url de landing"
+        400:
+          description: "Mensaje error controlado
+                      \n- El nombre del cliente es requerido.
+                      \n- El e-mail del cliente es requerido.
+                      \n- La dirección de e-mail no es una dirección valida.
+                      \n- Los documentos deben ser PDF (*.pdf).
+                      \n- Los datos requeridos no están completos.
+                      \n- El trámite no existe."
+        401:
+          description: "No autenticado"
+        403:
+          description: "No autorizado"
+        500:
+          description: "Error interno"
+      security:
+        - OAuth2: []
+  /api/documents/{id}/attachments/{from}:
+    post:
+      tags:
+        - "Adjunta un documento en el trámite"
+      summary: "Adjunta un documento a un tramite por id"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "Identificador del tramite"
+          required: true
+          type: "string"
+        - name: "from"
+          in: "path"
+          description: "Identificador de la acción (sign ó file)"
+          required: true
+          type: "string"
+        - name: "body"
+          in: "body"
+          description: "Información del tramite cater"
+          required: true
+          schema:
+            $ref: "#/definitions/MetadataAttach"
+        - name: "Authorization"
+          in: "header"
+          description: "Token"
+          required: true
+          type: "string"
+          default: "bearer "
+        - name: "Content-Type"
+          in: "header"
+          required: true
+          type: "string"
+          default: "application/json"
+      responses:
+        200:
+          description: "Operación exitosa"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                title: "Identificador del trámite."
+        400:
+          description: "Datos inválidos"
+        401:
+          description: "No autenticado"
+        403:
+          description: "No autorizado"
+        404:
+          description: "Lote no encontrado"
+        500:
+          description: "Error interno"
+      security:
+        - OAuth2: []
+  /api/v1/cater/{id}/status:
+    put:
+        tags:
+          - "Cambia estado a tramite Cater"
+        summary: "Cambia estado a tramite Cater"
+        produces:
+          - "application/json"
+        parameters:
+          - name: "id"
+            in: "path"
+            description: "Identificador del tramite"
+            required: true
+            type: "string"
+          - name: "body"
+            in: "body"
+            description: "Información del tramite cater"
+            required: true
+            schema:
+              $ref: "#/definitions/MetadataEstado"
+          - name: "Authorization"
+            in: "header"
+            description: "Token"
+            required: true
+            type: "string"
+            default: "bearer "
+          - name: "Content-Type"
+            in: "header"
+            required: true
+            type: "string"
+            default: "application/json"
+        responses:
+          200:
+            description: "Operación exitosa"
+            schema:
+              type: "object"
+              properties:
+                success:
+                  type: "boolean"
+                  title: "Cambio estado exitoso"
+          400:
+            description: "Datos inválidos"
+          401:
+            description: "No autenticado"
+          403:
+            description: "No autorizado"
+          500:
+            description: "Error interno"
+        security:
+          - OAuth2: []
+  /api/v1/cater/signed:
+    post:
+      tags:
+        - "Firma un trámite Cater"
+      summary: "Firma un trámite Cater por id"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "body"
+          in: "body"
+          description: "Información del tramite cater"
+          required: true
+          schema:
+            $ref: "#/definitions/MetadataAttachSign"
+        - name: "Authorization"
+          in: "header"
+          description: "Token"
+          required: true
+          type: "string"
+          default: "bearer "
+        - name: "Content-Type"
+          in: "header"
+          required: true
+          type: "string"
+          default: "application/json"
+      responses:
+        200:
+          description: "Operación exitosa"
+          schema:
+            type: "object"
+            properties:
+              success:
+                type: "boolean"
+                title: "Firma exitosa"
+        400:
+          description: "Datos inválidos"
+        401:
+          description: "No autenticado"
+        403:
+          description: "No autorizado"
+        500:
+          description: "Error interno"
+      security:
+        - OAuth2: []
+  /api/v1/cater/notify:
+    put:
+      tags:
+        - "Notifica un trámite Cater"
+      summary: "Notifica un trámite Cater por id"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "body"
+          in: "body"
+          description: "Identificador del trámite a notificar"
+          required: true
+          schema: 
+            type: "object"
+            description: "Identificador del trámite a notificar"
+            required:
+              - "Id"
+            properties: 
+              Id: 
+                type: "string"
+                description: "Identificador del trámite a notificar"
+        - name: "Authorization"
+          in: "header"
+          description: "Token"
+          required: true
+          type: "string"
+          default: "bearer "
+        - name: "Content-Type"
+          in: "header"
+          required: true
+          type: "string"
+          default: "application/json"
+      responses:
+        200:
+          description: "Operación exitosa"
+          schema:
+            type: "object"
+            properties:
+              success:
+                type: "boolean"
+                title: "Notificación exitosa"
+        400:
+          description: "Datos inválidos"
+        401:
+          description: "No autenticado"
+        403:
+          description: "No autorizado"
+        500:
+          description: "Error interno"
+      security:
+        - OAuth2: []
+  /api/claroDocuments/documentsProjection:
+    get:
+      tags:
+        - "Listado de trámites"
+      summary: "Devuelve información de los trámites"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "app"
+          in: "query"
+          description: "Identificador de aplicativo"
+          required: true
+          type: "string"
+          default: "tucarpeta.com"
+        - name: "flow"
+          in: "query"
+          description: "Identificador del proceso"
+          required: true
+          type: "string"
+          default: "cater"
+        - name: "flowState"
+          in: "query"
+          description: "Estado o estados del proceso"
+          required: true
+          type: "string"
+        - name: "companyId"
+          in: "query"
+          description: "Identificador de la compañia"
+          required: true
+          type: "integer"
+          default: "30680950047"
+        - name: "branchId"
+          in: "query"
+          description: "Identificador de membresía"
+          required: true
+          type: "string" 
+        - name: "dateFrom"
+          in: "query"
+          description: "Fecha a partir de la cual se devolverán los trámites"
+          required: true
+          type: "string" 
+        - name: "dateTo"
+          in: "query"
+          description: "Fecha hasta la cual se devolverán los trámites"
+          required: true
+          type: "string" 
+        - name: "onlyShared"
+          in: "query"
+          description: "??"
+          type: "string"
+          required: true
+        - name: "pageIndex"
+          in: "query"
+          description: "??"
+          type: "integer"
+          required: true
+        - name: "pageSize"
+          in: "query"
+          description: ""
+          type: "integer"
+          required: true
+        - name: "sortField"
+          in: "query"
+          required: true
+          description: "Campo por el cual se ordena el response"
+          type: "string"
+        - name: "sortOrder"
+          in: "query"
+          required: true
+          description: "Tipo de ordenamiento"
+          type: "string"
+        - name: "v"
+          in: "query"
+          required: true
+          description: "??"
+          type: "integer"
+        - name: "Authorization"
+          in: "header"
+          description: "Token"
+          required: true
+          type: "string"
+          default: "bearer "
+        - name: "Content-Type"
+          in: "header"
+          required: true
+          type: "string"
+          default: "application/json"
+      responses:
+        200:
+          description: "Operación exitosa"
+          schema:
+            type: "object"
+            properties:
+              id:
+                type: "string"
+                title: "Identificador del trámite."
+        400:
+          description: "Datos inválidos"
+        401:
+          description: "No autenticado"
+        403:
+          description: "No autorizado"
+        500:
+          description: "Error interno"
+      security:
+        - OAuth2: []
+schemes:
+  - "https"
+securityDefinitions:
+  OAuth2:
+    tokenUrl: "https://test-doc.claro.com.py/api/token"
+    type: "oauth2"
+    flow: "password"
+definitions:
+  MetadataEstado:
+    type: "object"
+    description: "metadata para cambiar estado"
+    required:
+      - "EventName"
+      - "Accept"
+      - "Reason"
+    properties: 
+      EventName: 
+        type: "string"
+        description: "nombre del evento"
+      Accept: 
+        type: "boolean"
+        description: "se espera recibir true o false"
+        default: true
+      Reason:
+        type: "string"
+        description: "razón de la ejecución del evento"
+  MetadataAttach:
+    type: "object"
+    description: "metadata para enviar un archivo"
+    required:
+      - "attachments"
+    properties: 
+      attachments:
+        type: array
+        description: Archivo adjunto
+        items:
+          $ref: "#/definitions/Attachment"
+  MetadataAttachSign:
+    type: "object"
+    description: "metadata para enviar un archivo"
+    required:
+      - "id"
+      - "attachments"
+    properties: 
+      id:
+        type: string
+        description: Identificador del trámite
+      attachments:
+        type: array
+        description: Firma adjunto
+        items:
+          $ref: "#/definitions/Attachment"
+  MetadataAcp:
+    type: "object"
+    description: "Metadata asociada a Cater"
+    required:
+      - "metadataKey"
+      - "metadata"
+      - "attachments"
+    properties:
+      metadataKey: 
+        type: string
+        description: en cater Argentina se espera recibir acp
+      metadata:
+        $ref: "#/definitions/Metadata"
+      attachments:
+        type: array
+        description: Archivos adjuntos al trámite
+        items:
+          $ref: "#/definitions/Attachment"
+  Metadata:
+    type: object
+    title: Metadatos a asociar al trámite
+    required:
+      - "number"
+      - "customer"
+      - "phone"
+    properties:
+      number:
+        type: string
+        description: número de trámite acp
+      customer:
+        $ref: "#/definitions/Customer"
+      agent:
+        type: "string"
+        description: "Código o número del agente"
+        default: null
+      addressStreetNumber:
+        type: "string"
+        description: "Dirección del cliente"
+        default: null
+      addressPostalCode:
+        type: "string"
+        description: "Código postal del cliente"
+        default: null
+      electronicInvoice:
+        type: "string"
+        description: "Tipo de adhesión a la factura electrónica"
+        default: null
+      cycId:
+        type: "string"
+        description: "Ciclo con el que se active la cuenta"
+        default: null
+      numberOfLines:
+        type: "integer"
+        description: "Cantidad de líneas"
+        default: 0
+      pointOfSale:
+        type: "string"
+        description: "Punto de venta"
+      dte:
+        type: "array"
+        description: "Valor correspondiente a did_dte_body"
+        items:
+          $ref: "#/definitions/Dte"
+      paymentMethod:
+        type: "string"
+        description: "Forma de pago general del trámite"
+      phone:
+        $ref: "#/definitions/Phone"
+      phones:
+        type: "array"
+        items:
+          $ref: "#/definitions/Phone"
+        description: "Teléfonos asociados al trámite"
+        default: null
+      salesman:
+        type: "string"
+        description: "Código o número del vendedor"
+      values:
+        type: "object"
+        description: "Valores asociados al trámite"
+        required:
+          - "subtotal"
+          - "deviceDiscount"
+          - "discount"
+          - "total"
+          - "clubDiscount"
+          - "pendingDeviceDiscount"
+          - "payments"
+        properties:
+          subtotal:
+            type: "number"
+            description: "Precio de lista"
+            default: 0.0
+          deviceDiscount:
+            type: "number"
+            description: "Bonificación de equipo"
+            default: 0.0
+          discount:
+            type: "number"
+            description: "Bonificación total"
+            default: 0.0
+          total:
+            type: "number"
+            description: "Precio de venta final"
+            default: 0.0
+          clubDiscount:
+            type: "number"
+            description: "Descuento Claro Club"
+            default: 0.0
+          pendingDeviceDiscount:
+            type: "number"
+            description: "Bonificación remanente de equipo pendiente"
+            default: 0.0
+          payments:
+            type: "array"
+            description: "Formas de pago del equipo"
+            items:
+              $ref: "#/definitions/Payment"
+          conditions:
+            type: "string"
+            description: "Condiciones de la bonificación de equipo otorgada"
+  Phone:
+    type: "object"
+    description: "Datos del teléfono"
+    required:
+      - "brand"
+      - "iccid"
+      - "imei"
+      - "model"
+      - "number"
+    properties:
+      brand:
+        type: "string"
+        description: "Marca del teléfono"
+      iccid:
+        type: "string"
+        description: "ICCID"
+      imei:
+        type: "string"
+        description: "IMEI del equipo"
+      model:
+        type: "string"
+        description: "Modelo del equipo"
+      number:
+        type: "string"
+        description: "Número de línea"
+      srtEstId:
+        type: "string"
+        description: "Forma de venta"
+      srtRplId:
+        type: "string"
+        description: "Codigo del plan"
+      promotions:
+        type: "array"
+        description: "Promociones asociadas al número de teléfono"
+        items:
+              $ref: "#/definitions/Promotion"
+  Promotion:
+    type: "object"
+    description: "Instancia de promocion del número de teléfono"
+    required:
+      - "promotionId"
+      - "promDescription"
+      - "promType"
+    properties:
+      promotionId:
+        type: "string"
+        description: "Identificador de promoción"
+      promDescription:
+        type: "string"
+        description: "Descripción de la promoción"
+      promType:
+        type: "string"
+        description: "Tipo de la promoción"
+  Payment:
+    type: "object"
+    description: "Instancia de forma de pago"
+    required:
+      - "name"
+      - "value"
+    properties:
+      name:
+        type: "string"
+        description: "Nombre de la forma de pago"
+      id:
+        type: "string"
+        description: "Número de tarjeta"
+      value:
+        type: "number"
+        description: "Valor total o de la cuota"
+      dues:
+        type: "integer"
+        description: "Cantidad de cuotas"
+        default: null
+      type:
+        type: "integer"
+        description: "Tipo de pago"
+        default: null
+      points:
+        type: "integer"
+        description: "Cantidad de puntos canjeados"
+        default: null
+      cft:
+        type: "number"
+        description: "CFT"
+        default: null
+      tea:
+        type: "number"
+        description: "TEA"
+        default: null
+      details:
+        type: "array"
+        description: "Colección de detalles referidos al pago"
+        items:
+          type: "object"
+          description: "Instancia del detalle referido al pago"
+          required:
+            - "name"
+            - "amount"
+          properties:
+            name:
+              type: "string"
+              description: "Nombre o descripción del detalle"
+            amount:
+              type: "number"
+              description: "Monto asociado al detalle"
+  Dte:
+    type: "object"
+    description: "Instancia de item DTE"
+    required:
+      - "dteTitle"
+      - "dteBody"
+    properties:
+      dteTitle:
+        type: "string"
+        description: "Título del item DTE"
+      dteBody:
+        type: "string"
+        description: "Cuerpo del item DTE"
+  Customer:
+    type: "object"
+    title: "datos del cliente"
+    required:
+      - "email"
+      - "name"
+      - "documentNumber"
+    properties:
+      email:
+        type: "string"
+        title: "Email del cliente"
+      name:
+        type: "string"
+        title: "Nombre completo del cliente"
+      documentNumber:
+        type: "string"
+        title: "Numero de documento del cliente"
+  Attachment:
+    type: "object"
+    title: "Instancia de archivo adjunto al trámite"
+    required:
+      - "contents"
+      - "contentType"
+      - "name"
+    properties:
+      contents:
+        type: "string"
+        title: "Contenidos del archivo en formato base64"
+      contentType:
+        type: "string"
+        title: "Tipo mime del contenido del archivo"
+      name:
+        type: "string"
+        title: "Nombre del archivo"
+host: "test-doc.claro.com.py"
+basePath: "/api"
