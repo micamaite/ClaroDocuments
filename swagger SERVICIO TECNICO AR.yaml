@@ -1,0 +1,1768 @@
+swagger: "2.0"
+info:
+  version: "1"
+  title: "Tucarpeta Claro Servicio Técnico"
+  description: "Servicios que se utilizaran para integrarse con tucarpeta desde la aplicación AVA y Claro."
+paths:
+  /token:
+    post:
+      tags:
+        - Auth
+      summary: Autentica a un usuario
+      description: Autentica a un usuario con OAuth2
+      consumes:
+        - application/x-www-form-urlencoded
+      produces:
+        - application/json
+      parameters:
+        - name: grant_type
+          in: formData
+          type: string
+          description: Tipo de credenciales a utilizar
+          required: true
+        - name: username
+          in: formData
+          type: string
+          description: Nombre de usuario a autenticar
+          required: true
+        - name: password
+          in: formData
+          type: string
+          description: Contraseña del usuario
+          required: true
+        - name: Content-Type
+          in: header
+          required: true
+          type: string
+          default: application/x-www-form-urlencoded
+      responses:
+        200:
+          description: Operación exitosa
+          schema:
+            type: object
+            properties:
+              access_token:
+                type: "string"
+                title: Token de acceso
+              token_type:
+                type: string
+                title: Tipo de token que se entrega
+              expires_in:
+                type: integer
+                title: Tiempo de expiración en segundos
+              user_name:
+                type: string
+                title: Nombre del usuario autenticado
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+  /claro/st/documents:
+    post:
+      tags:
+        - ST
+      summary: Nuevo Trámite
+      description: Creación del documento
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+        - name: body
+          in: body
+          description: Json para crear un nuevo trámite
+          required: true
+          schema:
+            $ref: "#/definitions/CrearSdst"
+      responses:
+        200:
+          description: Operación exitosa
+          schema:
+            $ref: "#/definitions/Respuesta"
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+      security:
+        - OAuth2: []
+  /clarost/attachments/v1:
+    post:
+      tags:
+        - ST
+      summary: Agregar Muleto al tramite
+      description: Mandar Muleto al tramite
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: id de documento
+          required: true
+          schema:
+            $ref: "#/definitions/AttachMuleteer"
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Operación exitosa
+          schema:
+            $ref: "#/definitions/RespuestaId"        
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+      security:
+        - OAuth2: []
+  /clarost/status/v1 (210 Reparado):
+    put:
+      tags:
+        - ST
+      summary: Estado Reparado 210
+      description: Modifica el estado de tramite a Reparado
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: id de documento
+          required: true
+          schema:
+            $ref: "#/definitions/AttachStatusRepaired"
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Operación exitosa
+          schema:
+            $ref: "#/definitions/RespuestaId"        
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+      security:
+        - OAuth2: []
+  /clarost/status/v1 (210 Reparado Primera Linea):
+    put:
+      tags:
+        - ST
+      summary: Estado Reparado 210
+      description: Modifica el estado de tramite a Reparado
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: id de documento
+          required: true
+          schema:
+            $ref: "#/definitions/StatusFirstLine"
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Operación exitosa
+          schema:
+            $ref: "#/definitions/RespuestaId"        
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+      security:
+        - OAuth2: []
+  /clarost/status/v1 (230 No Reparado):
+    put:
+      tags:
+        - ST
+      summary: Estado No Reparado 230
+      description: Modifica el estado de tramite a No Reparado
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: id de documento
+          required: true
+          schema:
+            $ref: "#/definitions/StatusNotRepaired"
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Operación exitosa
+          schema:
+            $ref: "#/definitions/RespuestaId"        
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+      security:
+        - OAuth2: []
+  /clarost/status/v1 (212 Presupuesto Rechazado):
+    put:
+      tags:
+        - ST
+      summary: Estado Presupuesto Rechazado 212
+      description: Modifica el estado de tramite a Presupuesto rechazado
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: id de documento
+          required: true
+          schema:
+            $ref: "#/definitions/StatusRejected"
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Operación exitosa
+          schema:
+            $ref: "#/definitions/RespuestaId"        
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+      security:
+        - OAuth2: []
+  /clarost/status/v1 (229 Entregado Asesor):
+    put:
+      tags:
+        - ST
+      summary: Estado Entrego Asesor 229
+      description: Modifica el estado de tramite a Entregado asesor
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: Objeto Entregado asesor
+          required: true
+          schema:
+            $ref: "#/definitions/StatusAgent"
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Operación exitosa
+          schema:
+            $ref: "#/definitions/RespuestaId"        
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+      security:
+        - OAuth2: []
+  /clarost/status/v1 (211 Entregado a Cliente):
+    put:
+      tags:
+        - ST
+      summary: Estado Entrego a Cliente 211
+      description: Modifica el estado de tramite a Entregado a Cliente
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: Objeto Entregado a cliente
+          required: true
+          schema:
+            $ref: "#/definitions/StatusClient"
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Operación exitosa
+          schema:
+            $ref: "#/definitions/RespuestaId"        
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+      security:
+        - OAuth2: []
+  /clarost/status/v1 (550 Gestión Anulada):
+    put:
+      tags:
+        - ST
+      summary: Estado Gestión Anulada 550
+      description: Modifica el estado de tramite a Gestión Aulada
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: Objeto Gestión Anulada
+          required: true
+          schema:
+            $ref: "#/definitions/StatusCancel"
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Operación exitosa
+          schema:
+            $ref: "#/definitions/RespuestaId"        
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+      security:
+        - OAuth2: []
+  /clarost/status/v1 (215 Deposito):
+    put:
+      tags:
+        - ST
+      summary: Estado Deposito 215
+      description: Modifica el estado de tramite a Deposito
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: Objeto Deposito
+          required: true
+          schema:
+            $ref: "#/definitions/StatusDeposit"
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Operación exitosa
+          schema:
+            $ref: "#/definitions/RespuestaId"        
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+      security:
+        - OAuth2: []
+  /claroDocuments/{id}/attachments:
+    post:
+      tags:
+        - AVA
+      summary: Adjunta fotos de celular dañado
+      description: Adjunta fotos de celular dañado
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: Filtro de busqueda
+          required: true
+          schema:
+            $ref: "#/definitions/attach"
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: id de documento
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: Operación exitosa
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+      security:
+        - OAuth2: []
+  /claroDocuments/{id}/status:
+    post:
+      tags:
+        - AVA
+      summary: Adjunta fotos de celular dañado
+      description: Adjunta fotos de celular dañado
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: Filtro de busqueda
+          required: true
+          schema:
+            $ref: "#/definitions/attach"
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+        - name: id
+          in: path
+          description: id de documento
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: Operación exitosa
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+      security:
+        - OAuth2: []
+  /clarost/{id}/details:
+    post:
+      tags:
+        - AVA
+      summary: Devuelve los detalles del documento
+      description: Devuelve los detalles del documento
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: id
+          in: path
+          description: id de documento
+          required: true
+          type: string
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Operación exitosa
+          schema:
+            $ref: "#/definitions/ResponseDetails"
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+      security:
+        - OAuth2: []
+  /clarost/signed:
+    post:
+      tags:
+        - AVA
+      summary: Firma y notifica la aceptacion tramite
+      description: Firma y notifica la aceptacion del tramite
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: id de documento
+          required: true
+          schema:
+            $ref: "#/definitions/SignedAndNotif"
+        - name: Authorization
+          in: header
+          required: true
+          type: string
+      responses:
+        200:
+          description: Operación exitosa
+          schema:
+            $ref: "#/definitions/ResponseClaro"
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+      security:
+        - OAuth2: []
+  /clarost/signedRetirement:
+    post:
+      tags:
+        - AVA
+      summary: Firma tramite para su retiro
+      description: Firma tramite para su retiro
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: Metadata para firma
+          required: true
+          schema:
+            $ref: "#/definitions/SignedRetiredAttach"
+      responses:
+        200:
+          description: Operación exitosa
+          schema:
+            $ref: "#/definitions/ResponseClaro"
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+      security:
+        - OAuth2: []  
+  /clarost/notifRetirement:
+    post:
+      tags:
+        - AVA
+      summary: Notificacion tramite para su retiro
+      description: Notificacion tramite para su retiro
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: body
+          in: body
+          description: id de documento
+          required: true
+          schema:
+            $ref: "#/definitions/NotifSignedRetiredAttach"
+      responses:
+        200:
+          description: Operación exitosa
+          schema:
+            properties:
+              ok:
+                type: boolean
+                title: true / false             
+        400:
+          description: Datos inválidos
+        401:
+          description: No autenticado
+        403:
+          description: No autorizado
+        404:
+          description: Trámite no encontrado
+        500:
+          description: Error interno
+      security:
+        - OAuth2: []       
+schemes:
+  - https
+securityDefinitions:
+  OAuth2:
+    tokenUrl: https://test-doc.claro.com.ar/api/token
+    type: oauth2
+    flow: password
+definitions:
+  CrearSdst:
+    type: object
+    title: Datos del trámite a crear
+    required:
+      - application
+      - flow
+      - name
+      - contents
+      - contentType
+      - metadata
+      - branchId
+      - companyId
+    properties:
+      application:
+        type: string
+        title: Nombre de la aplicación dueña del trámite
+        default: tucarpeta.com
+      flow:
+        type: string
+        title: Flujo asociado al trámite
+      name:
+        type: string
+        title: Nombre del trámite
+      contents:
+        type: string
+        title: Contenidos del archivo en formato base64
+      contentType:
+        type: string
+        title: Tipo mime del contenido del archivo
+      branchId:
+        type: string
+        title: Sucursal
+      companyId:
+        type: string
+        title: id de sucursal
+      metadata:
+        type: object
+        title: Metadatos a asociar al trámite
+        required:
+          - customer
+          - number
+          - status
+          - agent
+          - addressStreetNumber
+          - addressPostalCode
+          - pointOfSale
+        properties:
+          customer:
+            $ref: "#/definitions/Customer"
+          number:
+            type: string
+            title: Código o número de trámite
+          status:
+            type: object
+            title: objeto estado
+            required: 
+              - code
+              - description
+            properties:
+              code:
+                type: string
+                title: codigo de estado
+              description: 
+                type: string
+                title: descripcion del codigo de estado
+          agent:
+            type: string
+            title: Código o número del agente
+          addressStreetNumber:
+            type: string
+            title: Dirección del cliente
+          addressPostalCode:
+            type: string
+            title: Código postal del cliente
+          pointOfSale:
+            type: string
+            title: Punto de venta
+          contact:
+            type: object
+            title: objeto contacto
+            required: 
+              - phoneNumber
+            properties:
+              phoneNumber:
+                type: string
+                title: Número de contacto
+          phones:
+            type: array
+            title: Teléfonos asociados al trámite
+            items:
+              $ref: "#/definitions/Phone"
+          Failed:
+            type: object
+            title: descripcion de fallo
+            required:
+              - check
+              - notesCheck
+              - reportFailed
+              - comments
+              - accessories
+            properties:
+              check:
+                type: array
+                title: Titulo de falla
+                items:
+                  type: string
+              notesCheck:
+                type: string
+                title: Notas de falla 
+              reportFailed:
+                type: array
+                title: Error de falla
+                items:
+                  type: string
+              comments:
+                type: string
+                title: Comentarios de falla  
+              accessories:
+                type: string
+                title: Accesorio del celular
+  Customer:
+    type: object
+    title: Datos del cliente de la línea
+    required:
+      - documentNumber
+      - taxId
+      - email
+      - name
+      - lastName
+      - isEmailConfirmed
+    properties:
+      documentNumber:
+        type: string
+        title: Número de documento
+      taxId:
+        type: string
+        title: CUIT
+      email:
+        type: string
+        title: Correo electrónico
+      name:
+        type: string
+        title: Nombre del cliente
+      lastName:
+        type: string
+        title: Apellido del cliente  
+      isEmailConfirmed:
+        type: boolean
+        title: Determina si el correo electrónico informado está confirmado
+  Payment:
+    type: object
+    title: Instancia de forma de pago
+    required:
+      - name
+      - value
+    properties:
+      name:
+        type: string
+        title: Nombre de la forma de pago
+      id:
+        type: string
+        title: Identificador de la forma de pago. Ej. Nro de tarjeta, etc.
+      value:
+        type: number
+        title: Valor total o de la cuota
+      dues:
+        type: integer
+        title: Cantidad de cuotas
+        default: null
+      type:
+        type: integer
+        title: Tipo de pago (1-pesos 2-puntos)
+        default: null
+      points:
+        type: integer
+        title: Cantidad de puntos canjeados
+        default: null
+      cft:
+        type: number
+        title: CFT
+        default: null
+      tea:
+        type: number
+        title: TEA
+        default: null
+      details:
+        type: array
+        title: Colección de detalles referidos al pago
+        items:
+          type: object
+          title: Instancia del detalle referido al pago
+          required:
+            - name
+            - amount
+          properties:
+            name:
+              type: string
+              title: Nombre o descripción del detalle
+            amount:
+              type: number
+              title: Monto asociado al detalle
+  Phone:
+    type: object
+    title: Datos del teléfono
+    required:
+      - brand
+      - imei
+      - model
+      - number
+      - activationDate
+    properties:
+      brand:
+        type: string
+        title: Marca del teléfono
+      imei:
+        type: string
+        title: IMEI del equipo
+      model:
+        type: string
+        title: Modelo del equipo
+      number:
+        type: string
+        title: Número de línea
+      activationDate:
+        type: string
+        title: Fecha de activación
+  Respuesta:
+    type: object
+    title: respuesta de creacion de doc
+    properties:
+      id:
+        type: string
+        title: id del documento
+      url:
+        type: string
+        title: url de tramite
+      urlEnd:
+        type: string
+        title: urlEnd de tramite
+  RespuestaId:
+    type: object
+    title: respuesta attach muleteer
+    properties:
+      id:
+        type: string
+        title: id del documento
+  attach:
+    type: array
+    title: respuesta de creacion de documento
+    items:
+      $ref: "#/definitions/attachments"
+  attachments:
+    type: object
+    title: Datos del teléfono
+    required:
+      - name
+      - contents
+      - contentType
+    properties:
+      name:
+        type: string
+        title: Firma Holografica
+      contents:
+        type: string
+        title: Firma
+      contentType:
+        type: string
+        title: IMEI del equipo 
+  ResponseDetails:
+    type: object
+    title: Respuesta de detalle
+    properties:
+      DocumentId:
+        type: string
+        title: id del documento 
+      NumberOr:
+        type: string
+        title: Nro de orden de reparacion
+      CodeStatus:
+        type: string
+        title: estado de tramite
+      Status:
+          type: array
+          title: respuesta de lista detalle
+          items:
+            $ref: "#/definitions/Details"
+      Action:
+        type: object
+        title: Datos del teléfono
+        required:
+          - Code
+          - Description
+        properties:
+          Code:
+            type: string
+            title: Codigo de accion
+          Description:
+            type: string
+            title: descripcion de accion
+          Message:
+            type: string
+            title: mensaje
+  ResponseClaro:
+    type: object
+    title: Respuesta de detalle
+    properties:
+      DocumentId:
+        type: string
+        title: id del documento 
+      Status:
+        type: string
+        title: estado
+      UploadDateUtc:
+        type: string
+        title: estado de tramite
+      Error:
+          type: number
+          title: nro error
+      document:
+        type: object
+        title: Datos del teléfono
+        properties:
+          name:
+            type: string
+            title: nombre
+          address:
+            type: string
+            title: direccion
+          dte:
+            type: string
+            title: dte
+      errorMessage:
+        type: string
+        title: mensaje de error
+      ok:
+        type: string
+        title: true / false
+      flow:
+        type: string
+        title: estado de tramite
+      dte:
+        type: object
+        title: objeto dte
+      email:
+        type: string
+        title: email
+      count:
+        type: number
+        title: contador
+      errorDate:
+          type: boolean
+          title: true / false
+  Details:
+    type: object
+    title: Datos del teléfono
+    required:
+      - name
+      - contents
+      - contentType
+    properties:
+      name:
+        type: string
+        title: Firma Holografica
+      contents:
+        type: string
+        title: Firma
+      contentType:
+        type: string
+        title: IMEI del equipo 
+  SignedAndNotif:
+    type: object
+    title: Datos del teléfono
+    required:
+      - id
+      - Attachment
+    properties:
+      id:
+        type: string
+        title: Id de documento
+      Attachment:
+        type: array
+        title: respuesta de lista detalle
+        items:
+          $ref: "#/definitions/Signed"
+  Signed:
+    type: object
+    title: Datos de firma
+    required:
+      - name
+      - contents
+      - contentType
+    properties:
+      name:
+        type: string
+        title: Firma Holografica
+      contents:
+        type: string
+        title: Firma
+      contentType:
+        type: string
+        title: IMEI del equipo
+  Attachment:
+    type: object
+    title: Objeto que adjunta archivos
+    required:
+      - name
+      - contents
+      - contentType
+    properties:
+      name:
+        type: string
+        title: Nombre del archivo
+      contents:
+        type: string
+        title: Base64 del archivo
+      contentType:
+        type: string
+        title: Tipo de archivo
+  Values:
+            type: object
+            title: Valores asociados al trámite
+            required:
+              - subtotal
+              - deviceDiscount
+              - discount
+              - total
+              - clubDiscount
+              - pendingDeviceDiscount
+              - payments
+            properties:
+              subtotal:
+                type: number
+                title: Precio de lista
+                default: 0.0
+              deviceDiscount:
+                type: number
+                title: Bonificación de equipo
+                default: 0.0
+              discount:
+                type: number
+                title: Bonificación total
+                default: 0.0
+              total:
+                type: number
+                title: Precio de venta final
+                default: 0.0
+              clubDiscount:
+                type: number
+                title: Descuento Claro Club
+                default: 0.0
+              pendingDeviceDiscount:
+                type: number
+                title: Bonificación remanente de equipo pendiente
+                default: 0.0
+              payments:
+                type: array
+                title: Formas de pago del equipo
+                items:
+                  $ref: "#/definitions/Payment"
+  SignedRetiredAttach:
+    type: object
+    title: Datos del teléfono
+    required:
+      - id
+      - Attachment
+    properties:
+      id:
+        type: string
+        title: Firma Holografica
+      Attachment:
+        type: array
+        title: respuesta de lista detalle
+        items:
+          $ref: "#/definitions/SignedAttach"
+      Metadata:
+        type: object
+        title: comentario
+        properties:
+          Observation:
+            type: string
+            title: Observacion 
+          UploadDate:
+            description: 'Fecha de carga'
+            example: "01-01-2017 23:59:59"
+            format: dateTime
+            pattern: "DD-MM-YYYY hh:mm:ss"
+            type: string  
+  NotifSignedRetiredAttach:
+    type: object
+    title: Datos del teléfono
+    required:
+      - id
+      - Attachment
+    properties:
+      id:
+        type: string
+        title: Firma Holografica
+  SignedAttach:
+    type: object
+    title: Datos de firma
+    required:
+      - name
+      - contents
+      - contentType
+    properties:
+      name:
+        type: string
+        title: Firma Holografica
+      contents:
+        type: string
+        title: Firma
+      contentType:
+        type: string
+        title: IMEI del equipo       
+  AttachMuleteer:
+    type: object
+    title: Datos del teléfono
+    required:
+      - metadataKey
+      - metadata
+      - attachments
+    properties:
+      metadataKey:
+        type: string
+        title: Key de metadata
+        default: st
+      metadata:
+        type: object
+        title: metadatos
+        properties:
+          number:
+            type: string
+            title: Número de orden de reparación
+          status:
+            type: object
+            title: estado 
+            properties:
+              code:
+                type: string
+                title: codigo de estado
+              description:
+                type: string
+                title: descripcion de estado  
+          phonesMuleto:
+            type: array
+            title: Datos de muleto
+            items:
+              $ref: "#/definitions/MuleteerInfo"
+      attachments:
+        type: array
+        title: Archivos muletos a adjuntar al trámite
+        items:
+          $ref: "#/definitions/Attachment"
+  MuleteerInfo:
+    type: object
+    title: Datos del teléfono
+    required:
+      - brand
+      - Metadata
+      - Attachment
+    properties:
+      brand:
+        type: string
+        title: Marca de equipo
+      imei:
+        type: string
+        title: imei de equipo
+      model:
+        type: string
+        title: model de equipo
+      number:
+        type: string
+        title: number de equipo
+      date:
+        type: string
+        title: date de equipo  
+  AttachStatusRepaired:
+    type: object
+    title: Datos del de trámite reparado
+    required:
+      - metadataKey
+      - metadata
+      - attachments
+    properties:
+      metadataKey:
+        type: string
+        title: llave metadata
+      metadata:
+        type: object
+        title: Metadatos a asociar al trámite
+        required:
+          - number
+          - status
+          - repair
+          - technic
+          - values
+        properties:
+          number:
+            type: string
+            title: Código o número de trámite
+          stickerNum:
+            type: string
+            title: Código o número de sticker
+          status:
+            type: object
+            title: objeto estado
+            required: 
+              - code
+              - description
+            properties:
+              code:
+                type: string
+                title: codigo de estado
+                default: "210"
+              description: 
+                type: string
+                title: descripcion del codigo de estado
+                default: "Equipo apto retiro"
+          firstline:
+            type: boolean
+            title: Código o número de trámite      
+            default: false
+          repair:
+            type: object
+            title: Datos de la reparación
+            required: 
+              - diagnosis
+              - solution
+            properties:
+              diagnosis:
+                type: array
+                title: Diagnostico
+                items:
+                 type: string
+              solution:
+                type: array
+                title: Solucion
+                items:
+                 type: string
+          technic:
+            type: object
+            title: Datos del técnico
+            required: 
+              - code
+              - description
+            properties:
+              name:
+                type: string
+                title: Nombre completo del técnico
+              userName: 
+                type: string
+                title: Usuario del técnico
+              type: 
+                type: string
+                title: Tipo de técnico
+              password: 
+                type: string
+                title: Contraseña o pin para firmar los documentos
+          values:
+            $ref: "#/definitions/Values"
+      attachments:
+        type: array
+        title: Archivo pdf INFORME TECNICO
+        items:
+          $ref: "#/definitions/Attachment"
+  StatusFirstLine:
+    type: object
+    title: Datos del de trámite reparado primera linea
+    required:
+      - metadataKey
+      - metadata
+      - attachments
+    properties:
+      metadataKey:
+        type: string
+        title: llave metadata
+      metadata:
+        type: object
+        title: Metadatos a asociar al trámite
+        required:
+          - number
+          - status
+          - repair
+          - technic
+          - values
+        properties:
+          number:
+            type: string
+            title: Código o número de trámite
+          stickerNum:
+            type: string
+            title: Código o número de sticker
+          status:
+            type: object
+            title: objeto estado
+            required: 
+              - code
+              - description
+            properties:
+              code:
+                type: string
+                title: codigo de estado
+                default: "210"
+              description: 
+                type: string
+                title: descripcion del codigo de estado
+                default: "Equipo apto retiro"
+          firstline:
+            type: boolean
+            title: Código o número de trámite      
+            default: true
+          repair:
+            type: object
+            title: Datos de la reparación
+            required: 
+              - diagnosis
+              - solution
+            properties:
+              diagnosis:
+                type: array
+                title: Diagnostico
+                items:
+                 type: string
+              solution:
+                type: array
+                title: Solucion
+                items:
+                 type: string
+          technic:
+            type: object
+            title: Datos del técnico
+            required: 
+              - code
+              - description
+            properties:
+              name:
+                type: string
+                title: Nombre completo del técnico
+              userName: 
+                type: string
+                title: Usuario del técnico
+              type: 
+                type: string
+                title: Tipo de técnico
+              password: 
+                type: string
+                title: Contraseña o pin para firmar los documentos
+          values:
+            $ref: "#/definitions/Values"
+      attachments:
+        type: array
+        title: Archivo pdf INFORME TECNICO
+        items:
+          $ref: "#/definitions/Attachment"  
+  StatusNotRepaired:
+    type: object
+    title: Datos del de trámite No Reparado
+    required:
+      - metadataKey
+      - metadata
+      - attachments
+    properties:
+      metadataKey:
+        type: string
+        title: llave metadata
+      metadata:
+        type: object
+        title: Metadatos a asociar al trámite
+        required:
+          - number
+          - status
+          - repair
+          - technic
+          - values
+        properties:
+          number:
+            type: string
+            title: Código o número de trámite
+          stickerNum:
+            type: string
+            title: Código o número de sticker
+          status:
+            type: object
+            title: objeto estado
+            required: 
+              - code
+              - description
+            properties:
+              code:
+                type: string
+                title: codigo de estado
+                default: "230"
+              description: 
+                type: string
+                title: descripcion del codigo de estado
+                default: "Equipo apto retiro"
+          repair:
+            type: object
+            title: Datos de la reparación
+            required: 
+              - diagnosis
+              - solution
+            properties:
+              diagnosis:
+                type: array
+                title: Diagnostico
+                items:
+                 type: string
+              solution:
+                type: array
+                title: Solucion
+                items:
+                 type: string
+          technic:
+            type: object
+            title: Datos del técnico
+            required: 
+              - code
+              - description
+            properties:
+              name:
+                type: string
+                title: Nombre completo del técnico
+              userName: 
+                type: string
+                title: Usuario del técnico
+              type: 
+                type: string
+                title: Tipo de técnico
+              password: 
+                type: string
+                title: Contraseña o pin para firmar los documentos
+          values:
+            $ref: "#/definitions/Values"
+      attachments:
+        type: array
+        title: Archivo pdf INFORME TECNICO
+        items:
+          $ref: "#/definitions/Attachment"
+  StatusRejected:
+    type: object
+    title: Datos del de trámite Presupuesto rechazado
+    required:
+      - metadataKey
+      - metadata
+      - attachments
+    properties:
+      metadataKey:
+        type: string
+        title: llave metadata
+      metadata:
+        type: object
+        title: Metadatos a asociar al trámite
+        required:
+          - number
+          - status
+          - repair
+          - technic
+          - values
+        properties:
+          number:
+            type: string
+            title: Código o número de trámite
+          stickerNum:
+            type: string
+            title: Código o número de sticker
+          status:
+            type: object
+            title: objeto estado
+            required: 
+              - code
+              - description
+            properties:
+              code:
+                type: string
+                title: codigo de estado
+                default: "212"
+              description: 
+                type: string
+                title: descripcion del codigo de estado
+                default: "Equipo apto retiro"
+          repair:
+            type: object
+            title: Datos de la reparación
+            required: 
+              - diagnosis
+              - solution
+            properties:
+              diagnosis:
+                type: array
+                title: Diagnostico
+                items:
+                 type: string
+              solution:
+                type: array
+                title: Solucion
+                items:
+                 type: string
+          technic:
+            type: object
+            title: Datos del técnico
+            required: 
+              - code
+              - description
+            properties:
+              name:
+                type: string
+                title: Nombre completo del técnico
+              userName: 
+                type: string
+                title: Usuario del técnico
+              type: 
+                type: string
+                title: Tipo de técnico
+              password: 
+                type: string
+                title: Contraseña o pin para firmar los documentos
+          values:
+            $ref: "#/definitions/Values"
+      attachments:
+        type: array
+        title: Archivo pdf INFORME TECNICO
+        items:
+          $ref: "#/definitions/Attachment"
+          
+  StatusAgent:
+    type: object
+    title: Datos del de trámite Entregado Asesor
+    required:
+      - metadataKey
+      - metadata
+    properties:
+      metadataKey:
+        type: string
+        title: llave metadata
+      metadata:
+        type: object
+        title: Metadatos a asociar al trámite
+        required:
+          - number
+          - status
+          - designatedAgent
+        properties:
+          number:
+            type: string
+            title: Código o número de trámite
+          status:
+            type: object
+            title: objeto estado
+            required: 
+              - code
+              - description
+            properties:
+              code:
+                type: string
+                title: codigo de estado
+                default: "229"
+              description: 
+                type: string
+                title: descripcion del codigo de estado
+                default: "Equipo apto retiro"
+          designatedAgent:
+            type: object
+            title: Asesor designado
+            required: 
+              - userName
+            properties:
+              userName:
+                type: string
+                title: Usuario asesor
+  StatusClient:
+    type: object
+    title: Datos del de trámite Entregado a cliente
+    required:
+      - metadataKey
+      - metadata
+    properties:
+      metadataKey:
+        type: string
+        title: llave metadata
+      metadata:
+        type: object
+        title: Metadatos a asociar al trámite
+        required:
+          - number
+          - status
+          - designatedAgent
+        properties:
+          number:
+            type: string
+            title: Código o número de trámite
+          status:
+            type: object
+            title: objeto estado
+            required: 
+              - code
+              - description
+            properties:
+              code:
+                type: string
+                title: codigo de estado
+                default: "211"
+              description: 
+                type: string
+                title: descripcion del codigo de estado
+                default: "ENTREGADO A CLIENTE"
+          user:
+            type: string
+            title: usuario
+  StatusCancel:
+    type: object
+    title: Datos del trámite 
+    required:
+      - metadataKey
+      - metadata
+    properties:
+      metadataKey:
+        type: string
+        title: llave metadata
+      metadata:
+        type: object
+        title: Metadatos a asociar al trámite
+        required:
+          - number
+          - status
+        properties:
+          number:
+            type: string
+            title: Código o número de trámite
+          status:
+            type: object
+            title: objeto estado
+            required: 
+              - code
+              - description
+            properties:
+              code:
+                type: string
+                title: codigo de estado
+                default: "550"
+              description: 
+                type: string
+                title: descripcion del codigo de estado
+                default: "Gestión Anulada"
+          user:
+            type: string
+            title: usuario
+  StatusDeposit:
+    type: object
+    title: Datos del de trámite 
+    required:
+      - metadataKey
+      - metadata
+    properties:
+      metadataKey:
+        type: string
+        title: llave metadata
+      metadata:
+        type: object
+        title: Metadatos a asociar al trámite
+        required:
+          - number
+          - status
+        properties:
+          number:
+            type: string
+            title: Código o número de trámite
+          status:
+            type: object
+            title: objeto estado
+            required: 
+              - code
+              - description
+            properties:
+              code:
+                type: string
+                title: codigo de estado
+                default: "215"
+              description: 
+                type: string
+                title: descripcion del codigo de estado
+                default: "Gestión Anulada"
+          user:
+            type: string
+            title: usuario
+host: test-doc.claro.com.ar
+basePath: /api
